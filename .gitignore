@@ -1,0 +1,6 @@
+/target
+/pom.xml
+/pom.xml.asc
+/.lein-*
+/.nrepl-*
+/*.log
