@@ -72,4 +72,9 @@
   (with-open [db (hikari/make-datasource default-config)
               conn (jdbc/connection db)]
     (jdbc/atomic conn
-      (jdbc/execute conn ["insert into messages (id, message) values (?, ?);" (uuid/v1) "Heeloz"]))))
+      (jdbc/execute conn ["insert into messages (id, message) values (?, ?)" (uuid/v1) "Heeloz"])))
+
+  (with-open [db (hikari/make-datasource default-config)
+              conn (jdbc/connection db)]
+    (jdbc/atomic conn
+      (jdbc/execute conn ["delete from messages"]))))
