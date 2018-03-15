@@ -27,14 +27,10 @@ body {
 .main-view {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
 }
 
 .message-form {
 }
 
 .messages {
-  li {
-    list-style: none;
-  }
 }
