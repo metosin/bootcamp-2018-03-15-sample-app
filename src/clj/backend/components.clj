@@ -10,5 +10,5 @@
                     :path "/"
                     :handler (ig/ref ::routes/handler)}
    ::routes/handler {:ctx {:db (ig/ref ::db/db)}}
-   ::db/db {}
+   ::db/db {:config {}}
    ::db/migrate {:db (ig/ref ::db/db)}})

@@ -2,7 +2,9 @@
 -- Initial DB schema:
 --
 
-create table messages (
+create schema if not exists app;
+
+create table app.messages (
   id uuid primary key,
   message text
 );

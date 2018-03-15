@@ -28,15 +28,11 @@
 (defmethod ig/halt-key! ::db [_ db]
   (hikari/close-datasource db))
 
-(comment
-  (with-open [db (hikari/make-datasource default-config)]
-    (jdbc/fetch db "select 42 as \"answer\"")))
-
 ;;
 ;; Migrations:
 ;;
 
-(def +schemas+ ["public"])
+(def +schemas+ ["app"])
 (def +locations+ ["classpath:db/migrations"])
 
 (defn ^Flyway make-flyway [db]
@@ -58,23 +54,34 @@
       (make-flyway)
       (migrate)))
 
-(comment
-  (with-open [ds (hikari/make-datasource default-config)]
-    (-> ds
-        (make-flyway)
-        (clean-db)
-        (migrate))))
+;;
+;; Nothing to see here, move along...
+;;
 
 (comment
-  (with-open [db (hikari/make-datasource default-config)]
-    (jdbc/fetch db "select * from messages"))
 
-  (with-open [db (hikari/make-datasource default-config)
-              conn (jdbc/connection db)]
-    (jdbc/atomic conn
-      (jdbc/execute conn ["insert into messages (id, message) values (?, ?)" (uuid/v1) "Heeloz"])))
+  (def db (-> integrant.repl.state/system ::db))
 
-  (with-open [db (hikari/make-datasource default-config)
-              conn (jdbc/connection db)]
+  ;; Reset DB:
+  (-> db
+      (make-flyway)
+      (clean-db)
+      (migrate))
+
+  ;; List messages:
+  (with-open [conn (jdbc/connection db)]
+    (jdbc/fetch conn "select * from app.messages"))
+
+  ;; Insert message
+  (let [message "Heelozz"]
+    (with-open [conn (jdbc/connection db)]
+      (jdbc/atomic conn
+        (jdbc/execute conn ["insert into app.messages (id, message) values (?, ?)" (uuid/v1) message]))))
+
+  ;; Drop all messages:
+  (with-open [conn (jdbc/connection db)]
     (jdbc/atomic conn
-      (jdbc/execute conn ["delete from messages"]))))
+      (jdbc/execute conn ["truncate app.messages"])))
+
+  )
+

@@ -23,7 +23,7 @@
       :components [db]
       :return [Message]
       (->> (with-open [conn (jdbc/connection db)]
-             (jdbc/fetch conn "select * from messages"))
+             (jdbc/fetch conn "select * from app.messages"))
            (resp/ok)))
 
     (POST "/" []
@@ -34,6 +34,6 @@
             message (assoc new-message :id id)]
         (-> (with-open [conn (jdbc/connection db)]
               (jdbc/atomic conn
-                (jdbc/execute conn ["insert into messages (id, message) values (?, ?)" id (:message message)])
-                (jdbc/fetch conn "select * from messages")))
+                (jdbc/execute conn ["insert into app.messages (id, message) values (?, ?)" id (:message message)])
+                (jdbc/fetch conn "select * from app.messages")))
             (resp/ok))))))
