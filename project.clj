@@ -53,14 +53,12 @@
   :java-source-paths ["src/java"]
   :auto-clean false
 
-  :profiles {:dev {:resource-paths ["target/dev/resources"]
-                   :sass {:target-path "target/dev/resources/css"}}
-             :prod {:source-paths ^:replace ["src/clj" "src/cljs"]
-                    :resource-paths ["target/prod/resources"]
-                    :sass {:target-path "target/prod/resources/css"}}
-             :uberjar {:main backend.main
-                       :aot [backend.main]
-                       :uberjar-name "app.jar"}}
+  :sass {:source-paths ["src/sass"]
+         :source-map true
+         :output-style :compressed}
+
+  :figwheel {:css-dirs ["target/dev/resources/public/css"]
+             :repl false}
 
   :plugins [[lein-pdo "0.1.1"]
             [deraen/lein-sass4clj "0.3.1"]
@@ -68,9 +66,14 @@
             [lein-cljsbuild "1.1.7"]]
 
 
-  :sass {:source-paths ["src/sass"]
-         :source-map true
-         :output-style :compressed}
+  :profiles {:dev {:resource-paths ["target/dev/resources"]
+                   :sass {:target-path "target/dev/resources/public/css"}}
+             :prod {:source-paths ^:replace ["src/clj" "src/cljs"]
+                    :resource-paths ["target/prod/resources"]
+                    :sass {:target-path "target/prod/resources/public/css"}}
+             :uberjar {:main backend.main
+                       :aot [backend.main]
+                       :uberjar-name "app.jar"}}
 
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs"]
@@ -93,9 +96,6 @@
                                    :output-to "target/prod/resources/public/js/main.js"
                                    :output-dir "target/prod/resources/public/js/out"
                                    :closure-defines {goog.DEBUG false}}}]}
-
-  :figwheel {:css-dirs ["target/dev/resources/css"]
-             :repl false}
 
   :aliases {"dev" ["do" "clean"
                    ["pdo" ["sass4clj" "auto"] ["figwheel"]]]
